@@ -9,7 +9,7 @@
 ```
 MODULES_ON = {
 ...
-'daxuexi',  # 青年大学习
+'daxuexi_HoshinoBot',  # 青年大学习
 }
 ```
 3. 重启hoshino
