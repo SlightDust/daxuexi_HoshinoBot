@@ -1,0 +1,2 @@
+# daxuexi_HoshinoBot
+一个适用于HoshinoBot的青年大学习答案获取插件
