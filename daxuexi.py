@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 
 import hoshino
 from hoshino import Service,priv
+from hoshino import aiorequests
 
 sv = Service(
     name = '青年大学习',  #功能名
@@ -25,7 +26,7 @@ optionCond = "ABCDEF"
 condTemplate = "{num}. {check}"
 
 
-def get_current_info() -> dict:
+async def get_current_info() -> dict:
     response = {
         "status": "",
         "title": "",
@@ -39,8 +40,8 @@ def get_current_info() -> dict:
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.117 Safari/537.36"
     }
-    res = requests.get(url=url, headers=headers)
-    jStr = res.json()
+    res = await aiorequests.get(url=url, headers=headers)
+    jStr = await res.json()
     _status = jStr['status']
     response['status'] = _status
     if _status == 200:
@@ -76,8 +77,9 @@ def compare_time(time1, time2) -> bool:
         return False
     return True
 
-def parserHtml(url):
-    content = requests.get(url=url).content
+async def parserHtml(url):
+    res = await aiorequests.get(url=url)
+    content = await res.content
     answerArrs = {"required": [], "optional": []}
     tmp = []
     sindex = content.find(startsStr)
@@ -134,14 +136,14 @@ def parserHtml(url):
 
 @sv.on_fullmatch("青年大学习")
 async def daxuexi(bot, ev):
-    info = get_current_info()
+    info = await get_current_info()
     if len(info['errmsg']) > 0:
         msg_with_img = info['errmsg']
         msg_pure_text = info['errmsg']
     else:
         url = info['url']
         imgCQ = f"[CQ:image,file={info['cover_url']}]"
-        answer = parserHtml(url)
+        answer = await parserHtml(url)
         msg_with_img = f"{imgCQ}\n青年大学习{info['title']}\n开始时间{info['start_time']}\n结束时间{info['end_time']}\n答案：\n{answer}"
         msg_pure_text = f"青年大学习{info['title']}\n开始时间{info['start_time']}\n结束时间{info['end_time']}\n答案：\n{answer}"
     try:
