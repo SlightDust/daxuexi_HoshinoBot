@@ -1,7 +1,4 @@
 # 代码参考：Mas0nShi/antidaxuexi
-
-
-
 import requests
 import time
 import datetime
@@ -44,7 +41,6 @@ def get_current_info() -> dict:
     }
     res = requests.get(url=url, headers=headers)
     jStr = res.json()
-    # print(jStr)
     _status = jStr['status']
     response['status'] = _status
     if _status == 200:
@@ -80,19 +76,10 @@ def compare_time(time1, time2) -> bool:
         return False
     return True
 
-
-def testFunc():
-    data = requests.get("https://h5.cyol.com/special/weixin/sign.json").json()
-    for d in data:
-        print(data[d]["url"])
-        # print(parserHtml(data[d]["url"]))
-
-
 def parserHtml(url):
     content = requests.get(url=url).content
     answerArrs = {"required": [], "optional": []}
     tmp = []
-    # print(content.decode())
     sindex = content.find(startsStr)
     eindex = content.rfind(endStr)
     if sindex == -1 or eindex == -1:
@@ -111,8 +98,6 @@ def parserHtml(url):
             answer = answer[:int(len(answer) / 2)]
 
         tmp.append(answer)
-        # print("--------------------------------------------------------")
-    # print(tmp)
     field = "required"
     out = True
     for i, v in enumerate(tmp):
@@ -144,7 +129,6 @@ def parserHtml(url):
                     checks += optionCond[j]
             output += condTemplate.format(num=i + 1, check=checks)
             output += " "
-    # print(answerArrs)
     return output
 
 
@@ -152,19 +136,15 @@ def parserHtml(url):
 async def daxuexi(bot, ev):
     info = get_current_info()
     if len(info['errmsg']) > 0:
-        msg = info['errmsg']
+        msg_with_img = info['errmsg']
+        msg_pure_text = info['errmsg']
     else:
         url = info['url']
         imgCQ = f"[CQ:image,file={info['cover_url']}]"
         answer = parserHtml(url)
         msg_with_img = f"{imgCQ}\n青年大学习{info['title']}\n开始时间{info['start_time']}\n结束时间{info['end_time']}\n答案：\n{answer}"
         msg_pure_text = f"青年大学习{info['title']}\n开始时间{info['start_time']}\n结束时间{info['end_time']}\n答案：\n{answer}"
-        
-    #print(msg)
-    # await bot.send(ev, imgCQ)
     try:
         await bot.send(ev, msg_with_img)
     except aiocqhttp.exceptions.ActionFailed:
         await bot.send(ev, msg_pure_text)
-    # get_current_time()
-    # testFunc()
