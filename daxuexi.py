@@ -2,7 +2,8 @@
 import requests
 import time
 import datetime
-
+import os
+import json
 from bs4 import BeautifulSoup
 
 import hoshino
@@ -53,10 +54,11 @@ async def get_current_info() -> dict:
         response['start_time'] = _startTime
         response['end_time'] = _endTime
         response['cover_url'] = jStr['result']['cover']
-
+        response['url'] = jStr['result']['uri']
+        
         current_time = get_current_time()
         if compare_time(_endTime, current_time):
-            response['url'] = jStr['result']['uri']
+            pass
         else:
             response['errmsg'] = f"{_title}已结束，下一期还未开始"
     else:
@@ -148,5 +150,47 @@ async def daxuexi(bot, ev):
         msg_pure_text = f"青年大学习{info['title']}\n开始时间{info['start_time']}\n结束时间{info['end_time']}\n答案：\n{answer}"
     try:
         await bot.send(ev, msg_with_img)
-    except aiocqhttp.exceptions.ActionFailed:
+    except:
         await bot.send(ev, msg_pure_text)
+
+# ============================================ #
+
+
+# 以下是推送功能
+sv_push = Service(
+    name = '青年大学习推送',  #功能名
+    use_priv = priv.NORMAL, #使用权限   
+    manage_priv = priv.ADMIN, #管理权限
+    visible = False, #False隐藏
+    enable_on_default = False, #是否默认启用
+    )
+
+latest_path = os.path.join(os.path.dirname(__file__), 'latest.json')
+
+@sv_push.scheduled_job('cron', hour='7-23' ,minute='*/20')
+async def check_daxuexi():
+    info = await get_current_info()
+    
+    with open(latest_path,'r',encoding='utf-8') as jsonfile:
+        latest = json.load(jsonfile)[0]
+    if info['title'] == latest:
+        return
+    
+    url = info['url']
+    imgCQ = f"[CQ:image,file={info['cover_url']}]"
+    answer = await parserHtml(url)
+    msg_with_img = f"{imgCQ}\n检测到青年大学习更新！请注意及时完成！\n青年大学习{info['title']}\n开始时间{info['start_time']}\n结束时间{info['end_time']}\n答案：\n{answer}"
+    msg_pure_text = f"检测到青年大学习更新！请注意及时完成！\n青年大学习{info['title']}\n开始时间{info['start_time']}\n结束时间{info['end_time']}\n答案：\n{answer}"
+    bot = hoshino.get_bot()
+    glist_info = await sv_push.get_enable_groups()
+    for each_g in glist_info:
+        gid = each_g
+        try:
+            await bot.send_group_msg(group_id=gid, message=msg_with_img)
+        except:
+            await bot.send_group_msg(group_id=gid, message=msg_pure_text)
+    new_latest = [info['title']]
+    with open(latest_path,'w',encoding='utf-8') as jsonfile:
+        json.dump(new_latest,jsonfile)
+    
+    
