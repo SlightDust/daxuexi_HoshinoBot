@@ -22,7 +22,8 @@ sv = Service(
 # ============================================ #
 
 startsStr = b""" <div class="section0 topindex">"""
-endStr = b'<script type="text/javascript" src="js/order.js"></script>'
+# endStr = b'<script type="text/javascript" src="js/order.js"></script>'
+endStr = b'<!-- <script type="text/javascript" src="js/index.js"></script> -->'
 optionCond = "ABCDEF"
 condTemplate = "{num}. {check}"
 
@@ -39,7 +40,7 @@ async def get_current_info() -> dict:
     }
     url = "https://qczj.h5yunban.com/qczj-youth-learning/cgi-bin/common-api/course/current"
     headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.117 Safari/537.36"
+        "User-Agent": "Mozilla/5.0 (Linux; Android 8.1; PAR-AL00 Build/HUAWEIPAR-AL00; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/57.0.2987.132 MQQBrowser/6.2 TBS/044304 Mobile Safari/537.36 MicroMessenger/6.7.3.1360(0x26070333) NetType/WIFI Language/zh_CN Process/tools"
     }
     res = await aiorequests.get(url=url, headers=headers)
     jStr = await res.json()
