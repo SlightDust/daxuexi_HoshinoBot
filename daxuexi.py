@@ -22,8 +22,7 @@ sv = Service(
 # ============================================ #
 
 startsStr = b""" <div class="section0 topindex">"""
-# endStr = b'<script type="text/javascript" src="js/order.js"></script>'
-endStr = b'<!-- <script type="text/javascript" src="js/index.js"></script> -->'
+endStr = [b'<script type="text/javascript" src="js/order.js"></script>',b'<!-- <script type="text/javascript" src="js/index.js"></script> -->',b'<!--']
 optionCond = "ABCDEF"
 condTemplate = "{num}. {check}"
 
@@ -86,7 +85,11 @@ async def parserHtml(url):
     answerArrs = {"required": [], "optional": []}
     tmp = []
     sindex = content.find(startsStr)
-    eindex = content.rfind(endStr)
+    for i in endStr:
+        _eindex = content.rfind(i)
+        if _eindex != -1:
+            eindex = _eindex
+            break
     if sindex == -1 or eindex == -1:
         return []
     soup = BeautifulSoup(content[sindex:eindex], 'lxml', from_encoding='utf-8')
