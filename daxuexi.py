@@ -91,16 +91,18 @@ async def parserHtml(url):
             eindex = _eindex
             break
     if sindex == -1 or eindex == -1:
-        return []
+        return ["喜报：获取答案失败。"]
     soup = BeautifulSoup(content[sindex:eindex], 'lxml', from_encoding='utf-8')
     for div in soup.find("body"):
         if div == "\n":
             continue
         answer = []
-        for i in div.find_all("div"):
-            check = i.get("data-a")
-            if check is not None:
-                answer.append(check)
+        try:
+            for i in div.find_all("div"):
+                check = i.get("data-a")
+                if check is not None:
+                    answer.append(check)
+        except:pass
 
         if len(answer) > 4:
             answer = answer[:int(len(answer) / 2)]
