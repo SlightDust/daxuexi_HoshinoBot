@@ -124,7 +124,9 @@ async def parserHtml(url):
             checks = ""
             for j, v2 in enumerate(v):
                 if v2 == "1":
-                    checks += optionCond[j]
+                    try:  # 乐了，这个ABCDEF搞崩了
+                        checks += optionCond[j]
+                    except: pass
 
             output += condTemplate.format(num=i + 1, check=checks)
             output += " "
