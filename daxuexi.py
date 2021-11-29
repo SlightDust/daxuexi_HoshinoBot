@@ -136,7 +136,9 @@ async def parserHtml(url):
             checks = ""
             for j, v2 in enumerate(v):
                 if v2 == "1":
-                    checks += optionCond[j]
+                    try:  # 乐了，这个ABCDEF搞崩了
+                        checks += optionCond[j]
+                    except:pass
             output += condTemplate.format(num=i + 1, check=checks)
             output += " "
     return output
@@ -197,6 +199,6 @@ async def check_daxuexi():
             await bot.send_group_msg(group_id=gid, message=msg_pure_text)
     new_latest = [info['title']]
     with open(latest_path,'w',encoding='utf-8') as jsonfile:
-        json.dump(new_latest,jsonfile)
+        json.dump(new_latest, jsonfile, ensure_ascii=False, indent=4)
     
     
