@@ -22,7 +22,8 @@ sv = Service(
 # ============================================ #
 
 startsStr = b""" <div class="section0 topindex">"""
-endStr = [b'<script type="text/javascript" src="js/order.js"></script>',b'<!-- <script type="text/javascript" src="js/index.js"></script> -->',b'<!--']
+# endStr = [b'<script type="text/javascript" src="js/order.js"></script>',b'<!-- <script type="text/javascript" src="js/index.js"></script> -->',b'<!--']
+endStr = [b'</body>']
 optionCond = "ABCDEF"
 condTemplate = "{num}. {check}"
 
