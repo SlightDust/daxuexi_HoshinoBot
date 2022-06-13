@@ -21,7 +21,7 @@ sv = Service(
     
 # ============================================ #
 
-startsStr = b""" <div class="section0 topindex">"""
+startsStr = b"""section0"""
 # endStr = [b'<script type="text/javascript" src="js/order.js"></script>',b'<!-- <script type="text/javascript" src="js/index.js"></script> -->',b'<!--']
 endStr = [b'</body>']
 optionCond = "ABCDEF"
@@ -81,6 +81,7 @@ def compare_time(time1, time2) -> bool:
     return True
 
 async def parserHtml(url):
+    url = url.replace("index", "m")
     res = await aiorequests.get(url=url)
     content = await res.content
     answerArrs = {"required": [], "optional": []}
