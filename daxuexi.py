@@ -179,6 +179,10 @@ sv_push = Service(
 
 latest_path = os.path.join(os.path.dirname(__file__), 'latest.json')
 
+if not os.path.exists(latest_path):
+    with open(latest_path,'w',encoding='utf-8') as jsonfile:
+        json.dump([], jsonfile, ensure_ascii=False, indent=4)
+
 @sv_push.scheduled_job('cron', hour='7-23' ,minute='*/20')
 async def check_daxuexi():
     info = await get_current_info()
